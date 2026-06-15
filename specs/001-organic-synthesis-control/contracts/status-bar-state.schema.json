@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.spec/status-bar-state.schema.json",
+  "title": "StatusBarState",
+  "type": "object",
+  "required": [
+    "refreshIntervalMs",
+    "temperature",
+    "humidityRh",
+    "currentAction",
+    "remainingTime",
+    "runPhase"
+  ],
+  "properties": {
+    "refreshIntervalMs": {
+      "type": "integer",
+      "const": 1000,
+      "description": "UI refresh cadence; MUST be 1000 per plan."
+    },
+    "temperature": {
+      "type": "object",
+      "required": ["displayValue", "displayUnit", "valid"],
+      "properties": {
+        "displayValue": {
+          "type": ["number", "null"],
+          "description": "Rounded for display; null when invalid"
+        },
+        "displayUnit": {
+          "type": "string",
+          "enum": ["C", "F"]
+        },
+        "valid": { "type": "boolean" },
+        "stale": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "humidityRh": {
+      "type": "object",
+      "required": ["valuePercent", "valid"],
+      "properties": {
+        "valuePercent": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "valid": { "type": "boolean" },
+        "stale": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "currentAction": {
+      "type": "string",
+      "description": "Localized status-bar label; MUST follow workflow-step-mapping.md"
+    },
+    "remainingTime": {
+      "type": "object",
+      "required": ["mode", "seconds"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["countdown", "paused", "idle", "unknown"]
+        },
+        "seconds": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Null when unknown or idle without ETA"
+        }
+      },
+      "additionalProperties": false
+    },
+    "runPhase": {
+      "type": "string",
+      "enum": ["Idle", "Running", "Paused", "Failed", "Completed"]
+    }
+  },
+  "additionalProperties": false
+}
